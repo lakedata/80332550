@@ -35,6 +35,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'org.slf4j:slf4j-api:2.0.7'
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	//Swagger
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
 }
 
 tasks.named('test') {
