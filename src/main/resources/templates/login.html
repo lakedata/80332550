@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <!-- CSS 경로 확인 -->
+    <link rel="stylesheet" href="/css/login.css" th:href="@{/css/login.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+</head>
+<body>
+<!-- 헤더 포함 (경로 확인) -->
+<div th:replace="~{fragments/header}"></div>
+
+<div class="container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <div class="login_input">
+            <input type="email" id="email" placeholder="ID" required />
+            <input type="password" id="password" placeholder="PASSWORD" required />
+        </div>
+        <div class="submit_button">
+            <input type="submit" value="Login" />
+        </div>
+    </form>
+
+    <div id="result-message"></div>
+</div>
+
+<!-- 푸터 포함 (경로 확인) -->
+<div th:replace="~{fragments/footer}"></div>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();  // 폼 제출 기본 동작을 방지
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    fetch('/members/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 로그인 성공 시
+        console.log("Response Data:", data);  // 응답 데이터 확인
+
+        if (data.statusCode === "OK") {
+            // 응답 데이터에서 토큰 추출
+            console.log("Token: ", data.content);  // 받은 토큰 출력
+            document.getElementById('result-message').textContent = "로그인 성공!";
+        } else {
+            document.getElementById('result-message').textContent = "로그인 실패: " + data.message;
+        }
+    })
+    .catch(error => {
+        document.getElementById('result-message').textContent = "로그인 오류 발생";
+    });
+});
+</script>
+</body>
+</html>
