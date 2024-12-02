@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 상세보기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1e1e2f, #131322);
+            color: #ffffff;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #f0a500;
+            text-shadow: 0px 4px 8px rgba(255, 165, 0, 0.5);
+        }
+
+        /* Animated background elements */
+        .background-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(240, 165, 0, 0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .background-circle:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: 10%;
+            left: -100px;
+        }
+
+        .background-circle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            bottom: 15%;
+            right: -50px;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .board-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #ffde9e;
+        }
+
+        .board-content {
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 15px 5px;
+            padding: 12px 25px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(45deg, #f0a500, #ff4500);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(240, 165, 0, 0.4);
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header}"></div>
+<!-- Background effects -->
+<div class="background-circle"></div>
+<div class="container">
+    <!-- 게시판 상세보기 헤더 -->
+    <h1>게시글 상세보기</h1>
+
+    <!-- 게시물 정보 -->
+    <div class="board-info">
+        <span>제목: <span th:text="${post.title}"></span></span>
+        <span>작성자: <span th:text="${post.authorId}"></span></span>
+    </div>
+    <div class="board-info">
+        <span>작성일: <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+        <span class="view-count">조회수: <span th:text="${post.viewCount}"></span></span>
+    </div>
+
+    <!-- 게시물 내용 -->
+    <div class="board-content">
+        <p th:text="${post.content}"></p>
+    </div>
+
+    <!-- 조회수 증가 버튼 -->
+    <a href="#" class="btn" id="view-count-btn" th:href="@{/posts/{id}/increaseViewCount(id=${post.id})}">
+        조회수 증가
+    </a>
+
+    <!-- 이전/다음 게시물 링크 -->
+    <div class="navigation">
+        <a href="#" class="btn">이전 게시물</a>
+        <a href="#" class="btn">다음 게시물</a>
+    </div>
+</div>
+
+</body>
+</html>

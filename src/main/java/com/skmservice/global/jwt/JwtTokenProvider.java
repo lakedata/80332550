@@ -13,18 +13,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-import java.util.Base64;
 
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
 
-//    @Value("${jwt.secret}")
-//    private String secretKey;
-// secretKey를 충분히 긴 문자열로 설정
-private String secretKey = "skmserviceprojectskmserviceprojectskmserviceprojectskmserviceproject";
+    // secretKey를 충분히 긴 문자열로 설정
+    private String secretKey = "skmserviceprojectskmserviceprojectskmserviceprojectskmserviceproject";
 
     // 토큰 유효시간 30일
     private long tokenValidTime = 30 * 24 * 60 * 60 * 1000L;
@@ -35,35 +34,19 @@ private String secretKey = "skmserviceprojectskmserviceprojectskmserviceprojects
     @PostConstruct
     protected void init() {
         // secretKey를 Base64로 인코딩하여 HS512 알고리즘에 적합하게 만든다.
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
+
     // JWT 토큰 생성
     public String createToken(String email, List<String> roles) {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email)
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 동안 유효
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS512, secretKey)  // HS512 알고리즘 사용
                 .compact();
-
-//        System.out.println("Generated Token: " + token);  // 로그 출력
-
-        return token;
     }
-
-//    public String createToken(String userPk, List<String> roles) {
-//        Claims claims = (Claims) Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
-//        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
-//        Date now = new Date();
-//        return Jwts.builder()
-//                .setClaims(claims) // 정보 저장
-//                .setIssuedAt(now) // 토큰 발행 시간 정보
-//                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
-//                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
-//                // signature 에 들어갈 secret값 세팅
-//                .compact();
-//    }
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
@@ -73,30 +56,57 @@ private String secretKey = "skmserviceprojectskmserviceprojectskmserviceprojects
 
     // 토큰에서 회원 정보 추출
     public String getUserPk(String token) {
-        // Jwts.parserBuilder()를 사용하여 토큰을 파싱합니다.
         return Jwts.parser()
-                .setSigningKey(secretKey.getBytes()) // secretKey로 서명 검증
+                .setSigningKey(secretKey) // 직접 secretKey를 사용
                 .build() // JwtParser 객체 빌드
                 .parseClaimsJws(token)  // 토큰 파싱
                 .getBody()
                 .getSubject();  // 회원 정보 (userPk) 반환
     }
 
-    // Request의 Header에서 token 값을 가져옵니다. "Authorization" : "TOKEN값'
+    // Request의 Header에서 token 값을 가져옵니다. "Authorization" : "TOKEN값"
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);  // "Bearer " 접두어 제거 후 토큰 반환
+        }
+        return null;  // "Bearer "가 없으면 null 반환
     }
 
-    // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
         try {
-            // parseClaimsJws()를 호출하려면 parserBuilder()로 JwtParser 객체를 빌드해야 합니다.
+            // secretKey를 Base64에서 디코딩
+            byte[] decodedKey = Base64.getDecoder().decode(secretKey);
+
+            // JWT 파싱
             Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
-                    .build() // JwtParser 객체 빌드
-                    .parseClaimsJws(jwtToken); // JWT 파싱
-            return !claims.getBody().getExpiration().before(new Date());
+                    .setSigningKey(decodedKey)  // 디코딩된 secretKey 사용
+                    .build()  // JwtParser 객체 빌드
+                    .parseClaimsJws(jwtToken);  // JWT 파싱
+
+            // 만료일자 확인
+            Date expiration = claims.getBody().getExpiration();
+            if (expiration == null) {
+                throw new RuntimeException("만료일자가 없는 토큰입니다.");
+            }
+
+            // 만료일자 비교
+            return !expiration.before(new Date());
+        } catch (io.jsonwebtoken.SignatureException e) {
+            // 서명 문제 발생
+            System.err.println("서명 오류: " + e.getMessage());
+            return false;
+        } catch (io.jsonwebtoken.MalformedJwtException e) {
+            // 토큰 형식 오류
+            System.err.println("잘못된 토큰 형식: " + e.getMessage());
+            return false;
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            // 토큰 만료 오류
+            System.err.println("토큰 만료: " + e.getMessage());
+            return false;
         } catch (Exception e) {
+            // 기타 예외
+            System.err.println("토큰 검증 중 오류 발생: " + e.getMessage());
             return false;
         }
     }

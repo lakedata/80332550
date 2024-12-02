@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시물 작성</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        /* Global styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1e1e2f, #131322);
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #f0a500;
+            text-shadow: 0px 4px 8px rgba(255, 165, 0, 0.5);
+        }
+
+        /* Animated background elements */
+        .background-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(240, 165, 0, 0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .background-circle:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: 10%;
+            left: -100px;
+        }
+
+        .background-circle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            bottom: 15%;
+            right: -50px;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Form container */
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffde9e;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid #f0a500;
+            box-shadow: 0 0 10px #f0a500;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        /* File upload */
+        .file-upload {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload label {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #f0a500, #c57f00);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .file-upload label:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(240, 165, 0, 0.4);
+        }
+
+        /* Submit button */
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(45deg, #f0a500, #ff4500);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 69, 0, 0.4);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #ff4500, #f0a500);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header}"></div>
+
+<!-- Background effects -->
+<div class="background-circle"></div>
+
+<!-- Main container -->
+<div class="container">
+    <h1>게시물 작성</h1>
+    <form id="post-form">
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" placeholder="제목을 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea id="content" name="content" placeholder="내용을 입력하세요"></textarea>
+        </div>
+
+        <div class="file-upload">
+            <input type="file" id="file" name="file">
+            <label for="file">파일 선택</label>
+        </div>
+
+        <button type="submit">게시물 작성</button>
+    </form>
+    <p id="result-message"></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));  // JWT 디코딩
+            const memberId = payload.memberId;  // JWT에서 memberId 추출
+            // 작성자 ID 입력란 제거로 해당 코드도 삭제됩니다.
+        } catch (e) {
+            console.error('JWT 디코딩 오류:', e);
+        }
+    }
+});
+
+document.getElementById('post-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const token = localStorage.getItem('jwt_token'); // JWT 토큰 가져오기
+    if (!token) {
+        document.getElementById('result-message').textContent = '로그인이 필요합니다.';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', document.getElementById('title').value);
+    formData.append('content', document.getElementById('content').value);
+    const fileInput = document.getElementById('file').files[0];
+    if (fileInput) formData.append('file', fileInput);
+
+    fetch('/posts', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.statusCode === 'OK') {
+            document.getElementById('result-message').textContent = '게시물이 성공적으로 작성되었습니다!';
+        } else {
+            document.getElementById('result-message').textContent = '게시물 작성 실패: ' + data.message;
+        }
+    })
+    .catch(error => {
+        document.getElementById('result-message').textContent = '오류 발생: ' + error.message;
+    });
+});
+</script>
+
+</body>
+</html>
