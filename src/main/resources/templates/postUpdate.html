@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시물 수정 및 삭제</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+  <style>
+        /* Global styles (same as before) */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1e1e2f, #131322);
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ff6f61;
+            text-shadow: 0px 4px 8px rgba(255, 111, 97, 0.5);
+        }
+
+        .background-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 111, 97, 0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .background-circle:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: 10%;
+            left: -120px;
+        }
+
+        .background-circle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            bottom: 20%;
+            right: -80px;
+        }
+
+        /* Form container */
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffaba7;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid #ff6f61;
+            box-shadow: 0 0 10px #ff6f61;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .btn-group button {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-group .save-btn {
+            background: linear-gradient(45deg, #ff6f61, #ff3e3e);
+            color: #ffffff;
+        }
+
+        .btn-group .save-btn:hover {
+            background: linear-gradient(45deg, #ff3e3e, #ff6f61);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 63, 63, 0.6);
+        }
+
+        .btn-group .delete-btn {
+            background: linear-gradient(45deg, #444, #222);
+            color: #ff6f61;
+        }
+
+        .btn-group .delete-btn:hover {
+            background: linear-gradient(45deg, #222, #444);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 111, 97, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="background-circle"></div>
+<div class="background-circle"></div>
+
+<!-- Main container -->
+<div class="container">
+  <h1>게시물 수정 및 삭제</h1>
+  <form>
+    <div class="form-group">
+      <label for="title">제목</label>
+      <input type="text" id="title" name="title" value="기존 제목 입력">
+    </div>
+
+    <div class="form-group">
+      <label for="content">내용</label>
+      <textarea id="content" name="content">기존 내용 입력</textarea>
+    </div>
+
+    <div class="btn-group">
+      <button type="submit" class="save-btn">수정 완료</button>
+      <button type="button" class="delete-btn">삭제하기</button>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>
