@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+    .login-image {
+        width: 100%;
+        height: 80vh;
+        object-fit: cover;
+    }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header}"></div>
+<div class="container">
+    <img src="http://localhost:8080/images/main.png" alt="SK 게시판" class="login-image">
+</div>
+<div th:replace="~{fragments/footer}"></div>
+</body>

@@ -17,6 +17,7 @@
     <div class="register_input">
       <input type="email" id="email" placeholder="ID" required />
       <input type="password" id="password" placeholder="PASSWORD" required />
+      <input type="name" id="name" placeholder="NAME" required />
     </div>
     <div class="submit_button">
       <input type="submit" value="회원가입" />
@@ -35,12 +36,13 @@
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const name = document.getElementById('name').value;
 
         try {
             const response = await fetch('/members/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, name }),
             });
 
             if (response.ok) {

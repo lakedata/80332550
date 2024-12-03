@@ -4,30 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
-    <!-- CSS 경로 확인 -->
     <link rel="stylesheet" href="/css/login.css" th:href="@{/css/login.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
 <body>
-<!-- 헤더 포함 (경로 확인) -->
 <div th:replace="~{fragments/header}"></div>
 
 <div class="container">
-    <h2>Login</h2>
+    <h2>로그인</h2>
     <form id="login-form">
         <div class="login_input">
             <input type="email" id="email" placeholder="ID" required />
             <input type="password" id="password" placeholder="PASSWORD" required />
         </div>
         <div class="submit_button">
-            <input type="submit" value="Login" />
+            <input type="submit" value="로그인" />
         </div>
     </form>
 
     <div id="result-message"></div>
 </div>
 
-<!-- 푸터 포함 (경로 확인) -->
 <div th:replace="~{fragments/footer}"></div>
 
 <script>

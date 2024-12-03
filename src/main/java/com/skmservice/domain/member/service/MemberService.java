@@ -2,6 +2,7 @@ package com.skmservice.domain.member.service;
 
 import com.skmservice.domain.member.dto.request.MemberCreateRequest;
 import com.skmservice.domain.member.dto.request.MemberLoginRequest;
+import com.skmservice.domain.member.dto.response.MemberResponse;
 import com.skmservice.domain.member.entity.Member;
 import com.skmservice.domain.member.repository.MemberJpaRepository;
 import com.skmservice.global.common.CommonResponse;
@@ -52,4 +53,16 @@ public class MemberService {
 
         return CommonResponse.onSuccess();
     }
+
+
+    // 마이페이지 조회
+    public CommonResponse<MemberResponse> getMyPage(String memberId) {
+        Member member = memberRepository.findByEmail(memberId)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."));
+
+        MemberResponse response = new MemberResponse(member.getName(), member.getEmail());
+
+        return CommonResponse.onSuccess(response);
+    }
+
 }
