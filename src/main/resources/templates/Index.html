@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>간단한 자기소개</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+            color: #333;
+        }
+
+        .profile-container {
+            width: 80%;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 150px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #EA0028; /* SK 색상 */
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .info-image {
+            display: block;
+            margin: 0 auto;
+            max-width: 95%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro-section {
+            background-color: #F47725; /* SK 색상 */
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+        }
+
+        .intro-section h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tech-item {
+            background-color: #EA0028;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-item:hover {
+            background-color: #F47725;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header}"></div>
+
+<div class="profile-container">
+    <h2>간단한 자기소개</h2>
+    <img src="http://localhost:8080/images/info.png" alt="간단한 자기소개" class="info-image">
+
+    <div class="intro-section">
+        <h3>사용한 기술</h3>
+        <p>저는 Java 17과 Spring Boot 3.x 버전으로 백엔드 개발을 진행하였습니다. 데이터베이스로는 H2 Database를 사용하여 테스트 및 간단한 개발 환경을 구성했습니다.</p>
+        <p>Spring Security를 활용해 사용자 인증 및 권한 관리를 효율적으로 구현하였고, Spring Data JPA를 통해 객체와 관계형 데이터베이스 간의 매핑을 손쉽게 처리할 수 있었습니다. 프로젝트 빌드는 Gradle을 사용하여 관리하였습니다.</p>
+        <p>프론트엔드에서는 Thymeleaf 템플릿 엔진을 활용하여 동적인 HTML 콘텐츠를 생성했으며, JavaScript와 Ajax를 사용하여 비동기식 데이터 처리를 구현했습니다. 또한, JWT를 사용하여 인증 토큰을 관리하고, Postman을 통해 API 테스트를 수행하였습니다.</p>
+
+        <div class="tech-stack">
+            <div class="tech-item">Java 17</div>
+            <div class="tech-item">Spring Boot 3.x</div>
+            <div class="tech-item">H2 Database</div>
+            <div class="tech-item">Spring Security</div>
+            <div class="tech-item">Spring Data JPA</div>
+            <div class="tech-item">Gradle</div>
+            <div class="tech-item">Thymeleaf</div>
+            <div class="tech-item">JavaScript</div>
+            <div class="tech-item">Ajax</div>
+            <div class="tech-item">JWT</div>
+            <div class="tech-item">Postman</div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer}"></div>
+
+</body>
+</html>

@@ -19,7 +19,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/", "/h2-console/**").permitAll()
+                                .requestMatchers("/", "/Index", "/h2-console/**").permitAll()
                                 .requestMatchers("/members/**", "/posts/**", "/login", "/members/register", "/images/**", "/css/**", "/js/**", "/images/**").permitAll()
                                 .requestMatchers("/members/my-page").permitAll()
                                 .anyRequest().authenticated()
