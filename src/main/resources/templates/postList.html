@@ -198,76 +198,59 @@
         </tbody>
     </table>
 
-    <!-- 페이지네이션 -->
     <div class="pagination" id="pagination">
-        <!-- 페이지네이션 버튼이 이곳에 동적으로 표시됩니다 -->
     </div>
 </div>
 
 <footer th:replace="~{fragments/footer}"></footer>
 
 <script>
- // Fetch posts from the '/posts' endpoint
-fetch('/posts')
-    .then(response => response.json())
-    .then(data => {
-        const postList = document.getElementById('post-list'); // Get tbody element
-        const posts = data.content.content; // Access the list of posts
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPosts();     // 전체 목록
+});
 
-        // Clear existing posts
-        postList.innerHTML = '';
+function fetchPosts(searchQuery = '', reverseOrder = false, title = '', memberId = '') {
+    const url = `/posts?searchQuery=${searchQuery}&reverseOrder=${reverseOrder}&title=${title}&memberId=${memberId}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const postList = document.getElementById('post-list');
+            const posts = data.content.content;
 
-        // Create table rows for each post
-        posts.forEach(post => {
-            const listItem = document.createElement('tr'); // Create a new row for each post
-            const postLink = `/posts/${post.id}`; // The URL to navigate to
+            postList.innerHTML = ''; // Clear existing posts
 
-            listItem.innerHTML = `
-                <td><a href="${postLink}">${post.title}</a></td>
-                <td>${post.member}</td>
-                <td>${post.viewCount || 0}</td>  <!-- Assuming viewCount is available -->
-                <td>${post.fileAttached ? '첨부파일 있음' : '첨부파일 없음'}</td>
-                <td>${new Date(post.createdAt).toLocaleString()}</td>
-            `;
+            posts.forEach(post => {
+                const listItem = document.createElement('tr');
+                const postLink = `/posts/${post.id}`;
+                listItem.innerHTML = `
+                    <td><a href="${postLink}">${post.title}</a></td>
+                    <td>${post.member}</td>
+                    <td>${post.viewCount || 0}</td>
+                    <td>${post.fileAttached ? '첨부파일 있음' : '첨부파일 없음'}</td>
+                    <td>${new Date(post.createdAt).toLocaleString()}</td>
+                `;
+                listItem.onclick = () => window.location.href = `/posts/${post.id}/detail`;
+                postList.appendChild(listItem);
+            });
 
-            // Add click event to the row to navigate to the post
-            listItem.onclick = () => {
-<!--                window.location.href = postLink; // Navigate to the post URL-->
-                window.location.href = `/posts/${post.id}/detail`;
-            };
-
-            postList.appendChild(listItem); // Add row to tbody
-        });
-
-        // Handle pagination
-        const pagination = document.getElementById('pagination');
-        const totalPages = data.content.totalPages;
-
-        // Clear existing pagination
-        pagination.innerHTML = '';
-
-        // Add pagination buttons
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('a');
-            pageButton.textContent = i;
-            pageButton.href = `#`;
-            pageButton.onclick = (event) => {
-                event.preventDefault();
-                loadPage(i);  // Function to load specific page
-            };
-            pagination.appendChild(pageButton);
-        }
-    })
-    .catch(error => {
-        console.error("게시글 불러오기 실패:", error);
-    });
-
-// Function to handle page loading (for pagination)
-function loadPage(pageNumber) {
-    // You can modify this to re-fetch the posts for the specific page
-    // For simplicity, assuming that the page loading logic is handled here
-    console.log('Load page', pageNumber);
+            // Handle pagination (if needed)
+        })
+        .catch(error => console.error("게시글 불러오기 실패:", error));
 }
+
+// 역순 정렬
+document.getElementById('reverse-sort-btn').addEventListener('click', () => {
+    const isReversed = document.getElementById('reverse-sort-btn').dataset.reverseOrder === 'true';
+    document.getElementById('reverse-sort-btn').dataset.reverseOrder = !isReversed;
+    fetchPosts('', !isReversed);
+});
+
+document.getElementById('search-button').addEventListener('click', (e) => {
+    e.preventDefault();
+    const searchQuery = document.getElementById('search-input').value;
+    fetchPosts(searchQuery);
+});
+
 </script>
 
 </body>
