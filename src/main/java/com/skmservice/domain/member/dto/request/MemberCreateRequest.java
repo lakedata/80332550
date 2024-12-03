@@ -7,7 +7,8 @@ import java.util.Objects;
 
 public record MemberCreateRequest(
         String email,
-        String password
+        String password,
+        String name
 ) {
     @Builder
     public MemberCreateRequest {
@@ -18,6 +19,7 @@ public record MemberCreateRequest(
         return Member.builder()
                 .email(this.email)
                 .password(this.password)
+                .name(this.name)
                 .build();
     }
 }

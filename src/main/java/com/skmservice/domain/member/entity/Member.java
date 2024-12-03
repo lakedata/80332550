@@ -28,10 +28,14 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "member_password")
     private String password;
 
+    @Column(name = "member_name", unique = true)
+    private String name;
+
     @Builder
     public Member(MemberCreateRequest request) {
         this.email = request.email();
         this.password = request.password();
+        this.name = request.name();
     }
 
     @Override
@@ -41,6 +45,6 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return this.email;
     }
 }

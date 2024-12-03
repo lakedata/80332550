@@ -13,14 +13,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/", "/h2-console/**").permitAll()
-                        .requestMatchers("/members/**", "/posts/**" ,"/login", "/members/register", "/images/**", "/css/**", "/js/**", "/images/**").permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/", "/h2-console/**").permitAll()
+                                .requestMatchers("/members/**", "/posts/**", "/login", "/members/register", "/images/**", "/css/**", "/js/**", "/images/**").permitAll()
+                                .requestMatchers("/members/my-page").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

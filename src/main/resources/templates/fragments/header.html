@@ -109,15 +109,63 @@
 
 <nav id="nav3">
     <div class="logo">
-        <img src="http://localhost:8080/images/logo.png" alt="SK 로고">
+        <a href="/">
+            <img src="http://localhost:8080/images/logo.png" alt="SK 로고">
+        </a>
         <a href="#"></a>
     </div>
-    <ul>
+    <ul id="nav-list">
         <li><a href="/posts/list">게시판</a></li>
-        <li><a href="/">로그인</a></li>
+        <li><a href="/members/login" id="login-link">로그인</a></li>
         <li><a href="/members/register">회원가입</a></li>
     </ul>
 </nav>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('jwt_token');  // 로컬 스토리지에서 토큰 가져오기
+    const navList = document.getElementById('nav-list');
+    const loginLink = document.getElementById('login-link');
+
+    // 토큰이 존재하면 로그인 상태
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));  // JWT 토큰 디코딩
+            const memberId = payload.memberId;  // JWT에서 memberId 추출
+
+            // 로그인 상태일 때, 네비게이션 항목 변경
+            loginLink.textContent = '마이페이지';
+            loginLink.href = '#';  // 직접 이동하지 않고 fetch로 요청을 보냄
+
+            // 마이페이지 이동 함수
+            loginLink.addEventListener('click', function (event) {
+                event.preventDefault(); // 기본 동작 막기
+
+                window.location.href = '/members/mypagemap';
+            });
+
+
+            // 로그아웃 항목 추가
+            const logoutItem = document.createElement('li');
+            logoutItem.innerHTML = '<a href="#" id="logout-link">로그아웃</a>';
+            navList.appendChild(logoutItem);
+
+            // 로그아웃 기능 구현
+            document.getElementById('logout-link').addEventListener('click', function (event) {
+                event.preventDefault();
+                localStorage.removeItem('jwt_token');  // 로컬 스토리지에서 토큰 삭제
+                window.location.reload();  // 페이지 새로고침
+            });
+
+        } catch (e) {
+            console.error('JWT 디코딩 오류:', e);
+        }
+    } else {
+        // 토큰이 없으면 로그인 상태가 아니므로 '로그인' 항목을 그대로 표시
+        loginLink.textContent = '로그인';
+        loginLink.href = '/members/login';  // 로그인 페이지 링크
+    }
+});
+</script>
 </body>
 </html>
