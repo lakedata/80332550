@@ -19,16 +19,13 @@ public class PostService {
     private final PostJpaRepository postRepository;
     private final FileService fileService;
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     public PostReadResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         post.setViewCount(post.getViewCount() + 1);
         postRepository.save(post);
-
         postRepository.flush();  // 강제로 DB에 반영
-        System.out.println("After increment view count: " + post.getViewCount());
-
         return PostReadResponse.fromEntity(post);
     }
 
@@ -50,28 +47,37 @@ public class PostService {
         return PostCreateResponse.fromEntity(savedPost);
     }
 
+    // 게시글 수정
     @Transactional
     public void updatePost(Long id, PostUpdateRequest request) {
-        // 게시글 수정
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         post.update(request.title(), request.content());
         postRepository.save(post);
     }
 
+    // 게시글 삭제
     @Transactional
     public void deletePost(Long id) {
-        // 게시글 삭제
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         postRepository.delete(post);
     }
 
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> getPosts(int page, String searchQuery) {
-        PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by(Sort.Order.desc("createdAt")));
+    public Page<PostReadResponse> getPosts(int page, String searchQuery, boolean reverseOrder, String title, String memberId) {
+        PageRequest pageRequest = PageRequest.of(page - 1, 10, reverseOrder
+                ? Sort.by(Sort.Order.asc("createdAt"))
+                : Sort.by(Sort.Order.desc("createdAt")));
+
         Page<Post> posts;
 
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            posts = postRepository.findByTitleContainingOrMemberIdContaining(searchQuery, searchQuery, pageRequest);
+        if (title != null && !title.isEmpty() && memberId != null && !memberId.isEmpty()) {
+            posts = postRepository.findByTitleContainingAndMemberEmailContaining(title, memberId, pageRequest);
+        } else if (title != null && !title.isEmpty()) {
+            posts = postRepository.findByTitleContaining(title, pageRequest);
+        } else if (memberId != null && !memberId.isEmpty()) {
+            posts = postRepository.findByMemberEmailContaining(memberId, pageRequest);
+        } else if (searchQuery != null && !searchQuery.isEmpty()) {
+            posts = postRepository.findByTitleContainingOrMemberEmailContaining(searchQuery, searchQuery, pageRequest);
         } else {
             posts = postRepository.findAll(pageRequest);
         }
@@ -79,12 +85,9 @@ public class PostService {
         return posts.map(PostReadResponse::fromEntity);
     }
 
-    // 새로운 getPostById 메서드 추가
     @Transactional(readOnly = true)
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
     }
-
-
 }

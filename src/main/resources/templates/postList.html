@@ -163,7 +163,6 @@
 </head>
 <body>
 
-<!-- 헤더 포함 (Thymeleaf로 헤더 불러오기) -->
 <div th:replace="~{fragments/header}"></div>
 
 <div class="postcontainer">
@@ -176,6 +175,11 @@
             <input type="text" name="search" placeholder="제목이나 작성자ID로 검색" id="search-input">
             <button type="submit" id="search-button">검색</button>
         </form>
+    </div>
+
+    <!-- 역순 정렬 버튼 -->
+    <div class="board-search">
+        <button id="reverse-sort-btn">역순 정렬</button>
     </div>
 
     <!-- 게시판 목록 테이블 -->
@@ -200,7 +204,6 @@
     </div>
 </div>
 
-<!-- 푸터 포함 (Thymeleaf로 푸터 불러오기) -->
 <footer th:replace="~{fragments/footer}"></footer>
 
 <script>

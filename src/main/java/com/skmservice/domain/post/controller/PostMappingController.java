@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequiredArgsConstructor
@@ -26,10 +25,6 @@ public class PostMappingController {
         return "postAdd";
     }
 
-//    @GetMapping("/detail")
-//    public String DetailPage() {
-//        return "postDetail";
-//    }
     @GetMapping("/{postId}/detail")
     public String getPostDetail(@PathVariable Long postId, Model model) {
         System.out.println("Post ID: " + postId); // URL 경로에서 postId 확인

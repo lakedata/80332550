@@ -12,4 +12,11 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     Optional<Post> findById(Long postId);
     Page<Post> findByTitleContainingOrMemberIdContaining(String title, String memberId, Pageable pageable);
 
+    Page<Post> findByTitleContaining(String title, Pageable pageable);
+
+    Page<Post> findByMemberEmailContaining(String memberEmail, Pageable pageable);
+
+    Page<Post> findByTitleContainingAndMemberEmailContaining(String title, String memberEmail, Pageable pageable);
+
+    Page<Post> findByTitleContainingOrMemberEmailContaining(String title, String memberEmail, Pageable pageable);
 }
