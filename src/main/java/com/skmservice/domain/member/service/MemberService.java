@@ -39,7 +39,6 @@ public class MemberService {
         Member member = memberRepository.findByEmailAndPassword(request.email(), request.password())
                 .orElseThrow(() -> new CustomException(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 잘못되었습니다."));
 
-        // 로그인 성공 시 JWT 토큰 생성
         String token = jwtTokenProvider.createToken(member.getEmail(), List.of("ROLE_USER"));
 
         return CommonResponse.onSuccess(token);
