@@ -19,10 +19,16 @@ public class PostService {
     private final PostJpaRepository postRepository;
     private final FileService fileService;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public PostReadResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+        post.setViewCount(post.getViewCount() + 1);
+        postRepository.save(post);
+
+        postRepository.flush();  // 강제로 DB에 반영
+        System.out.println("After increment view count: " + post.getViewCount());
+
         return PostReadResponse.fromEntity(post);
     }
 
@@ -71,5 +77,12 @@ public class PostService {
         }
 
         return posts.map(PostReadResponse::fromEntity);
+    }
+
+    // 새로운 getPostById 메서드 추가
+    @Transactional(readOnly = true)
+    public Post getPostById(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
     }
 }

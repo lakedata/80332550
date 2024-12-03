@@ -65,7 +65,7 @@
         }
 
         .write-btn {
-           padding: 10px 20px;
+            padding: 10px 20px;
             margin-left: 10px;
             border: none;
             border-radius: 20px;
@@ -103,6 +103,7 @@
 
         table tr:hover {
             background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
         }
 
         table td a {
@@ -216,13 +217,22 @@ fetch('/posts')
         // Create table rows for each post
         posts.forEach(post => {
             const listItem = document.createElement('tr'); // Create a new row for each post
+            const postLink = `/posts/${post.id}`; // The URL to navigate to
+
             listItem.innerHTML = `
-                <td><a href="/posts/${post.id}">${post.title}</a></td>
+                <td><a href="${postLink}">${post.title}</a></td>
                 <td>${post.member}</td>
                 <td>${post.viewCount || 0}</td>  <!-- Assuming viewCount is available -->
                 <td>${post.fileAttached ? '첨부파일 있음' : '첨부파일 없음'}</td>
                 <td>${new Date(post.createdAt).toLocaleString()}</td>
             `;
+
+            // Add click event to the row to navigate to the post
+            listItem.onclick = () => {
+<!--                window.location.href = postLink; // Navigate to the post URL-->
+                window.location.href = `/posts/${post.id}/detail`;
+            };
+
             postList.appendChild(listItem); // Add row to tbody
         });
 
@@ -252,46 +262,9 @@ fetch('/posts')
 // Function to handle page loading (for pagination)
 function loadPage(pageNumber) {
     // You can modify this to re-fetch the posts for the specific page
-    // For simplicity, you can use the same fetch logic to pass the pageNumber parameter
-    fetch(`/posts?page=${pageNumber}`)
-        .then(response => response.json())
-        .then(data => {
-            // Repeat the same logic to update posts and pagination for the new page
-            const postList = document.getElementById('post-list');
-            const posts = data.content.content;
-            postList.innerHTML = '';
-            posts.forEach(post => {
-                const listItem = document.createElement('tr');
-                listItem.innerHTML = `
-                    <td><a href="/posts/${post.id}">${post.title}</a></td>
-                    <td>${post.member}</td>
-                    <td>${post.viewCount || 0}</td>
-                    <td>${post.fileAttached ? '첨부파일 있음' : '첨부파일 없음'}</td>
-                    <td>${new Date(post.createdAt).toLocaleString()}</td>
-                `;
-                postList.appendChild(listItem);
-            });
-
-            // Handle pagination
-            const pagination = document.getElementById('pagination');
-            const totalPages = data.content.totalPages;
-            pagination.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = document.createElement('a');
-                pageButton.textContent = i;
-                pageButton.href = `#`;
-                pageButton.onclick = (event) => {
-                    event.preventDefault();
-                    loadPage(i);
-                };
-                pagination.appendChild(pageButton);
-            }
-        })
-        .catch(error => {
-            console.error("페이지 불러오기 실패:", error);
-        });
+    // For simplicity, assuming that the page loading logic is handled here
+    console.log('Load page', pageNumber);
 }
-
 </script>
 
 </body>

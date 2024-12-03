@@ -19,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/posts")
 public class PostController {
-    private final PostService postService;
     private final MemberJpaRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PostService postService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<PostReadResponse>> getPost(@PathVariable Long id) {
