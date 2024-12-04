@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게시물 작성</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <title>게시글 작성</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- TinyMCE CDN -->
+    <script src="https://cdn.tiny.cloud/1/fdqcojfwhp757as3fuvtg16k0znr51kh4aszjs1bg6su2ebo/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+
     <style>
         /* Global styles */
         body {
@@ -151,66 +159,80 @@
 <body>
 <div th:replace="~{fragments/header}"></div>
 
-<!-- Background effects -->
-<div class="background-circle"></div>
-<div class="background-circle"></div>
-
-
-<!-- Main container -->
-<div class="add-container">
-    <h1>게시물 작성</h1>
-    <form id="post-form">
+<div class="container mt-5">
+    <h2>게시글 작성</h2>
+    <form id="postForm" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">제목</label>
-            <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
+            <input type="text" class="form-control" id="title" name="title" required>
         </div>
-
         <div class="form-group">
             <label for="content">내용</label>
-            <textarea id="content" name="content" placeholder="내용을 입력하세요" required></textarea>
+            <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
         </div>
-
-        <div class="file-upload">
-            <input type="file" id="file" name="file">
-            <label for="file">파일 선택</label>
+        <div class="form-group">
+            <label for="file">파일 첨부 (선택)</label>
+            <input type="file" class="form-control" id="file" name="file">
         </div>
-
-        <button type="submit">게시물 작성</button>
+        <button type="submit" class="btn btn-primary">게시글 작성</button>
     </form>
-    <p id="result-message"></p>
 </div>
 
-
-<div th:replace="~{fragments/footer}"></div>
-
 <script>
-document.getElementById('post-form').addEventListener('submit', function (event) {
-    event.preventDefault(); // 기본 폼 제출을 막음
-
-    const formData = new FormData();
-    formData.append('title', document.getElementById('title').value);
-    formData.append('content', document.getElementById('content').value);
-    formData.append('file', document.getElementById('file').files[0]);
-
-    // JWT 토큰을 요청 헤더에 포함
-    const token = localStorage.getItem('jwt_token');
-    fetch('/posts', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.statusCode === "OK")
-            document.getElementById('result-message').textContent = '게시물 작성 성공!';
-        } else {
-            document.getElementById('result-message').textContent = '게시물 작성 실패';
-        }
-    })
-    .catch(error => {
-        document.getElementById('result-message').textContent = '게시물 작성 중 오류 발생';
+    // TinyMCE 초기화
+    tinymce.init({
+        selector: '#content', // id 'content'에 에디터를 적용
+        plugins: 'image link', // 이미지 및 링크 삽입 플러그인
+        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | link image', // 툴바에 기능 추가
+        image_upload_url: '/upload', // 이미지 업로드 처리 URL (서버에서 처리해야 함)
+        height: 400, // 에디터 높이 설정
     });
-});
+
+    // JWT 토큰을 로컬 스토리지에서 가져오는 함수
+    function getAuthToken() {
+        return localStorage.getItem('jwt_token'); // 로컬 스토리지에서 'jwt-token'을 가져옵니다.
+    }
+
+    document.getElementById('postForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // 기본 폼 제출 동작을 막음
+
+        const title = document.getElementById('title').value;
+        const content = tinymce.get('content').getContent(); // TinyMCE 에디터의 내용 가져오기
+        const file = document.getElementById('file').files[0];
+
+        const authorizationHeader = getAuthToken(); // 로컬 스토리지에서 JWT 토큰을 가져옵니다.
+
+        if (!authorizationHeader) {
+            alert('로그인이 필요합니다. JWT 토큰을 확인해주세요.');
+            return; // 토큰이 없으면 알림을 띄우고 제출을 중지합니다.
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        if (file) formData.append('file', file);
+        formData.append('Authorization', 'Bearer ' + authorizationHeader); // Bearer 토큰 추가
+
+        fetch('/posts/add', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.statusCode === 'OK') {
+                alert('게시글이 성공적으로 작성되었습니다.');
+                // 서버에서 반환한 content 데이터를 사용하여 게시글 내용 표시하거나 페이지 이동
+                console.log(data.content); // 서버에서 반환한 게시글 내용 확인
+                window.location.href = '/posts/list';  // 게시글 목록으로 이동
+            } else {
+                alert('게시글 작성에 실패했습니다. 다시 시도해 주세요.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('서버와 연결하는 데 문제가 발생했습니다.');
+        });
+    });
 </script>
+</body>
+</html>

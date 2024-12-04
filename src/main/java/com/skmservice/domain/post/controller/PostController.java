@@ -1,5 +1,6 @@
 package com.skmservice.domain.post.controller;
 
+import com.skmservice.domain.file.service.FileService;
 import com.skmservice.domain.member.entity.Member;
 import com.skmservice.domain.member.repository.MemberJpaRepository;
 import com.skmservice.domain.post.dto.PostCreateRequest;
@@ -22,6 +23,8 @@ public class PostController {
     private final MemberJpaRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PostService postService;
+    private final FileService fileService;
+
 
     @GetMapping("/{id}")
     public CommonResponse<PostReadResponse> getPost(@PathVariable Long id) {
@@ -43,12 +46,16 @@ public class PostController {
         return CommonResponse.onSuccess(null);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public CommonResponse<PostCreateResponse> createPost(
-            @RequestPart String title,
-            @RequestPart String content,
-            @RequestPart(required = false) MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestHeader("Authorization") String authorizationHeader) {
+
+        System.out.println("Title: " + title);
+        System.out.println("Content: " + content);
+        System.out.println("File name: " + file.getOriginalFilename());
 
         String token = authorizationHeader.replace("Bearer ", "");
 
@@ -57,14 +64,25 @@ public class PostController {
         }
 
         String memberId = jwtTokenProvider.getUserPk(token);
+        System.out.println(memberId);
         Member member = memberRepository.findByEmail(memberId)
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
-        PostCreateRequest request = new PostCreateRequest(title, content, file);
+        // 파일 처리 (파일이 존재할 경우에만)
+        String filePath = null;
+        boolean fileAttached = false;
+        if (file != null) {
+            filePath = fileService.storeFile(file);  // 파일을 저장하고 경로를 반환
+            fileAttached = true;
+        }
+
+        PostCreateRequest request = new PostCreateRequest(title, content, fileAttached, filePath);
         PostCreateResponse response = postService.createPost(request, member);
 
         return CommonResponse.onSuccess(response);
     }
+
+
     @GetMapping
     public CommonResponse<Page<PostReadResponse>> getPosts(
             @RequestParam(defaultValue = "1") int page,

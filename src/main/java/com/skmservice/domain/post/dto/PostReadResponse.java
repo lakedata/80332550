@@ -7,6 +7,7 @@ public record PostReadResponse(
         String title,
         String content,
         int viewCount,
+        boolean fileAttached,
         String member,
         String createdAt
 ) {
@@ -16,6 +17,7 @@ public record PostReadResponse(
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                post.getFileAttached(),
                 post.getMember().getEmail(),
                 post.getCreatedAt().toString()
         );
