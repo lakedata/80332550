@@ -22,7 +22,8 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/Index", "/h2-console/**").permitAll()
                                 .requestMatchers("/members/**", "/posts/**", "/login", "/members/register", "/images/**", "/css/**", "/js/**", "/images/**").permitAll()
                                 .requestMatchers("/members/my-page").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/favicon.ico").permitAll()  // favicon.ico에 대한 접근을 허용
+                        .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

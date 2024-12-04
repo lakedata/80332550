@@ -69,10 +69,10 @@ public class PostController {
 
     @PostMapping("/add")
     public CommonResponse<PostCreateResponse> createPost(
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("title") String title,
             @RequestParam("content") String content,
-            @RequestParam(value = "file", required = false) MultipartFile file,
-            @RequestHeader("Authorization") String authorizationHeader) {
+            @RequestParam(value = "file", required = false) MultipartFile file) {
 
         System.out.println("Title: " + title);
         System.out.println("Content: " + content);
