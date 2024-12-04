@@ -43,16 +43,12 @@
 ---
 
 ### 아키텍처
-**Controller**  
-- 클라이언트 요청 처리 및 응답 반환  
-**Service**  
-- 비즈니스 로직 처리  
-**DTO**  
-- 데이터 전송 객체로 데이터 계층 간 이동 관리  
-**Repository**  
-- 데이터 접근 계층 (Persistence Layer)  
-**Entity**  
-- 데이터베이스 매핑 객체  
+
+**Controller**  - 클라이언트 요청 처리 및 응답 반환  
+**Service**  - 비즈니스 로직 처리  
+**DTO**  - 데이터 전송 객체로 데이터 계층 간 이동 관리  
+**Repository**  - 데이터 접근 계층 (Persistence Layer)  
+**Entity**  - 데이터베이스 매핑 객체  
 
 
 ## 주요 특징  
