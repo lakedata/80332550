@@ -6,6 +6,7 @@ public record PostReadResponse(
         Long id,
         String title,
         String content,
+        int viewCount,
         String member,
         String createdAt
 ) {
@@ -14,6 +15,7 @@ public record PostReadResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
+                post.getViewCount(),
                 post.getMember().getEmail(),
                 post.getCreatedAt().toString()
         );

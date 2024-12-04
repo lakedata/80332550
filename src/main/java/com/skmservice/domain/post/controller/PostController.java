@@ -65,16 +65,17 @@ public class PostController {
 
         return CommonResponse.onSuccess(response);
     }
-
     @GetMapping
     public CommonResponse<Page<PostReadResponse>> getPosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) String searchQuery,
             @RequestParam(defaultValue = "false") boolean reverseOrder,
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String memberId) {
+            @RequestParam(required = false) String memberId,
+            @RequestParam(defaultValue = "false") boolean sortByViewCount) {
 
-        Page<PostReadResponse> response = postService.getPosts(page, searchQuery, reverseOrder, title, memberId);
+        Page<PostReadResponse> response = postService.getPosts(page, searchQuery, reverseOrder, title, memberId, sortByViewCount);
         return CommonResponse.onSuccess(response);
     }
+
 }

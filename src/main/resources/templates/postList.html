@@ -179,7 +179,8 @@
 
     <!-- 역순 정렬 버튼 -->
     <div class="board-search">
-        <button id="reverse-sort-btn">역순 정렬</button>
+        <button id="reverse-sort-btn">등록일 역순</button>
+        <button id="viewCount-sort-btn">노출순</button>
     </div>
 
     <!-- 게시판 목록 테이블 -->
@@ -206,18 +207,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    fetchPosts();     // 전체 목록
+    fetchPosts(); // 전체 목록
 });
 
-function fetchPosts(searchQuery = '', reverseOrder = false, title = '', memberId = '') {
-    const url = `/posts?searchQuery=${searchQuery}&reverseOrder=${reverseOrder}&title=${title}&memberId=${memberId}`;
+function fetchPosts(searchQuery = '', reverseOrder = false, title = '', memberId = '', sortByViewCount = false) {
+    const url = `/posts?searchQuery=${searchQuery}&reverseOrder=${reverseOrder}&title=${title}&memberId=${memberId}&sortByViewCount=${sortByViewCount}`;
     fetch(url)
         .then(response => response.json())
         .then(data => {
             const postList = document.getElementById('post-list');
             const posts = data.content.content;
-
-            postList.innerHTML = ''; // Clear existing posts
+            postList.innerHTML = '';
 
             posts.forEach(post => {
                 const listItem = document.createElement('tr');
@@ -243,6 +243,13 @@ document.getElementById('reverse-sort-btn').addEventListener('click', () => {
     const isReversed = document.getElementById('reverse-sort-btn').dataset.reverseOrder === 'true';
     document.getElementById('reverse-sort-btn').dataset.reverseOrder = !isReversed;
     fetchPosts('', !isReversed);
+});
+
+// 조회수 기준 정렬 버튼 클릭 시
+document.getElementById("viewCount-sort-btn").addEventListener("click", function () {
+    const isSortByViewCount = document.getElementById("viewCount-sort-btn").dataset.sortByViewCount === 'true';
+    document.getElementById("viewCount-sort-btn").dataset.sortByViewCount = !isSortByViewCount;
+    fetchPosts('', false, '', '', !isSortByViewCount);
 });
 
 document.getElementById('search-button').addEventListener('click', (e) => {

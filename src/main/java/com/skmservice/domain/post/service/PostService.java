@@ -19,15 +19,18 @@ public class PostService {
     private final PostJpaRepository postRepository;
     private final FileService fileService;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostReadResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         post.setViewCount(post.getViewCount() + 1);
-        postRepository.save(post);
-        postRepository.flush();  // 강제로 DB에 반영
+
+        postRepository.saveAndFlush(post);  // 즉시 DB에 반영
+
         return PostReadResponse.fromEntity(post);
     }
+
+
 
     @Transactional
     public PostCreateResponse createPost(PostCreateRequest request, Member member) {
@@ -63,10 +66,19 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> getPosts(int page, String searchQuery, boolean reverseOrder, String title, String memberId) {
-        PageRequest pageRequest = PageRequest.of(page - 1, 10, reverseOrder
-                ? Sort.by(Sort.Order.asc("createdAt"))
-                : Sort.by(Sort.Order.desc("createdAt")));
+    public Page<PostReadResponse> getPosts(int page, String searchQuery, boolean reverseOrder, String title, String memberId, boolean sortByViewCount) {
+        PageRequest pageRequest;
+
+        // viewCount 기준 정렬 추가
+        if (sortByViewCount) {
+            pageRequest = PageRequest.of(page - 1, 10, reverseOrder
+                    ? Sort.by(Sort.Order.asc("viewCount"))
+                    : Sort.by(Sort.Order.desc("viewCount")));
+        } else {
+            pageRequest = PageRequest.of(page - 1, 10, reverseOrder
+                    ? Sort.by(Sort.Order.asc("createdAt"))
+                    : Sort.by(Sort.Order.desc("createdAt")));
+        }
 
         Page<Post> posts;
 
