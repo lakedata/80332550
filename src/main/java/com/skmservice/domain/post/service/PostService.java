@@ -45,16 +45,26 @@ public class PostService {
 
     // 게시글 수정
     @Transactional
-    public void updatePost(Long id, PostUpdateRequest request) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+    public void updatePost(Long id, PostUpdateRequest request, Member member) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+
+        if (!post.isOwnedBy(member)) {
+            throw new RuntimeException("작성자가 아니므로 수정할 수 없습니다.");
+        }
         post.update(request.title(), request.content());
         postRepository.save(post);
     }
 
     // 게시글 삭제
     @Transactional
-    public void deletePost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+    public void deletePost(Long id, Member member) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+
+        if (!post.isOwnedBy(member)) {
+            throw new RuntimeException("작성자가 아니므로 삭제할 수 없습니다.");
+        }
         postRepository.delete(post);
     }
 
