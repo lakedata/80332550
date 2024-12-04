@@ -2,10 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>간단한 자기소개</title>
+    <title>SK m&service 과제</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <style>
-        /* 기본 스타일 */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -22,16 +21,7 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 150px;
         }
-
-        h2 {
-            text-align: center;
-            color: #EA0028; /* SK 색상 */
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-
         .info-image {
             display: block;
             margin: 0 auto;
@@ -41,75 +31,115 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .intro-section {
-            background-color: #F47725; /* SK 색상 */
-            color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            margin-top: 30px;
+        h2 {
+            text-align: center;
+            color: #EA0028;
+            font-size: 32px;
+            margin-bottom: 20px;
         }
 
-        .intro-section h3 {
-            font-size: 28px;
-            margin-bottom: 15px;
+        h3 {
+            margin-top: 30px;
+            color: #F47725;
         }
 
         .tech-stack {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
         .tech-item {
             background-color: #EA0028;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 25px;
             font-size: 18px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        .tech-item:hover {
-            background-color: #F47725;
-            cursor: pointer;
+        .content-section {
+            margin: 30px 0;
+        }
+
+        .content-section ul {
+            margin-left: 20px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-left: 5px solid #EA0028;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
 
-<div th:replace="~{fragments/header}"></div>
-
 <div class="profile-container">
-    <h2>간단한 자기소개</h2>
+    <h2>SK m&service 과제</h2>
+
+    <h3>간단한 자기소개</h3>
     <img src="http://localhost:8080/images/info.png" alt="간단한 자기소개" class="info-image">
 
-    <div class="intro-section">
-        <h3>사용한 기술</h3>
-        <p>저는 Java 17과 Spring Boot 3.x 버전으로 백엔드 개발을 진행하였습니다. 데이터베이스로는 H2 Database를 사용하여 테스트 및 간단한 개발 환경을 구성했습니다.</p>
-        <p>Spring Security를 활용해 사용자 인증 및 권한 관리를 효율적으로 구현하였고, Spring Data JPA를 통해 객체와 관계형 데이터베이스 간의 매핑을 손쉽게 처리할 수 있었습니다. 프로젝트 빌드는 Gradle을 사용하여 관리하였습니다.</p>
-        <p>프론트엔드에서는 Thymeleaf 템플릿 엔진을 활용하여 동적인 HTML 콘텐츠를 생성했으며, JavaScript와 Ajax를 사용하여 비동기식 데이터 처리를 구현했습니다. 또한, JWT를 사용하여 인증 토큰을 관리하고, Postman을 통해 API 테스트를 수행하였습니다.</p>
 
+    <div class="content-section">
+        <h3>1. 개발 환경</h3>
+        <p>SK m&service 과제는 최신 기술 스택을 활용하여 백엔드와 프론트엔드를 통합적으로 설계 및 구현했습니다.</p>
+        <ul>
+            <li><strong>Front-End:</strong> Thymeleaf, HTML, CSS, JavaScript, AJAX</li>
+            <li><strong>Back-End:</strong> Java 17, Spring Boot 3.4.0, H2 Database, Spring Security, Spring Data JPA, Gradle, JWT</li>
+            <li><strong>버전 관리:</strong> Git (Squash and Merge 방식 적용)</li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h3>2. 구현 기능</h3>
+        <ul>
+            <li><strong>회원 관리:</strong> 회원가입, 로그인, 로그아웃, 마이페이지</li>
+            <li><strong>게시판 기능:</strong> 목록 조회(정렬,검색,페이징), 상세 조회, 노출, 게시글 작성, 수정 및 삭제</li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h3>3. 아키텍처 설계</h3>
+        <p>아키텍처는 책임 분리를 기반으로 설계되었으며, 유지보수성과 확장성을 강조했습니다.</p>
+        <ul>
+            <li><strong>Controller:</strong> 클라이언트 요청 처리 및 응답 반환</li>
+            <li><strong>Service:</strong> 비즈니스 로직 처리</li>
+            <li><strong>DTO:</strong> 데이터 전송 객체로 계층 간 데이터 이동 관리</li>
+            <li><strong>Repository:</strong> 데이터 접근 계층 (JpaRepository 및 커스텀 구현 포함)</li>
+            <li><strong>Entity:</strong> 데이터베이스 매핑 객체</li>
+        </ul>
+    </div>
+
+    <div class="content-section">
+        <h3>4. 주요 기술 및 특징</h3>
         <div class="tech-stack">
             <div class="tech-item">Java 17</div>
-            <div class="tech-item">Spring Boot 3.x</div>
+            <div class="tech-item">Spring Boot 3.4.0</div>
             <div class="tech-item">H2 Database</div>
             <div class="tech-item">Spring Security</div>
-            <div class="tech-item">Spring Data JPA</div>
-            <div class="tech-item">Gradle</div>
-            <div class="tech-item">Thymeleaf</div>
-            <div class="tech-item">JavaScript</div>
-            <div class="tech-item">Ajax</div>
             <div class="tech-item">JWT</div>
+            <div class="tech-item">Thymeleaf</div>
             <div class="tech-item">Postman</div>
+            <div class="tech-item">Gradle</div>
         </div>
+        <p>저는 Java 17과 Spring Boot 3.4.0 버전으로 백엔드 개발을 진행하였습니다. 데이터베이스로는 H2 Database를 사용하여 테스트 및 간단한 개발 환경을 구성했습니다.</p>
+        <p>Spring Security를 활용해 사용자 인증 및 권한 관리를 효율적으로 구현하였고, Spring Data JPA를 통해 객체와 관계형 데이터베이스 간의 매핑을 손쉽게 처리할 수 있었습니다. 프로젝트 빌드는 Gradle을 사용하여 관리하였습니다.</p>
+        <p>프론트엔드에서는 Thymeleaf 템플릿 엔진을 활용하여 동적인 HTML 콘텐츠를 생성했으며, JavaScript와 Ajax를 사용하여 비동기식 데이터 처리를 구현했습니다. 또한, JWT를 사용하여 인증 토큰을 관리하고, Postman을 통해 API 테스트를 수행하였습니다.</p>
     </div>
 </div>
-
-<div th:replace="~{fragments/footer}"></div>
 
 </body>
 </html>
