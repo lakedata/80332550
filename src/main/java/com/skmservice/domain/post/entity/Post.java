@@ -51,9 +51,18 @@ public class Post extends BaseEntity {
         this.content = request.content();
         this.member = member;
         this.filePath = filePath;  // 파일 경로 저장
-        this.fileAttached = filePath != null && !filePath.isEmpty(); // filePath가 있으면 fileAttached를 true로 설정
+        this.fileAttached = request.fileAttached(); // 첨부 파일 여부 설정
     }
 
+    public static Post toEntity(Member member, PostCreateRequest request) {
+        return Post.builder()
+                .member(member)
+                .title(request.title())
+                .content(request.content())
+                .fileAttached(request.fileAttached())
+                .filePath(request.filePath())
+                .build();
+    }
     public void increaseViewCount() {
         this.viewCount++;
     }
@@ -66,4 +75,8 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+    public boolean getFileAttached() {
+        return fileAttached;
+    }
+
 }

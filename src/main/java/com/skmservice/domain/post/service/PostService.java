@@ -31,21 +31,14 @@ public class PostService {
     }
 
 
-
+    // 게시글 생성
     @Transactional
     public PostCreateResponse createPost(PostCreateRequest request, Member member) {
-        // 파일 처리
-        String filePath = null;
-        if (request.file() != null) {
-            filePath = fileService.storeFile(request.file());  // 파일을 저장하고 경로를 반환받음
-        }
-
-        // 게시글 생성
         if (request.title().isEmpty() || request.content().isEmpty()) {
             throw new IllegalArgumentException("제목과 내용은 필수 입력 항목입니다.");
         }
 
-        Post post = new Post(request, member, filePath); // 파일 경로를 Post 생성 시 전달
+        Post post = Post.toEntity(member, request);
         Post savedPost = postRepository.save(post);
         return PostCreateResponse.fromEntity(savedPost);
     }
@@ -69,7 +62,6 @@ public class PostService {
     public Page<PostReadResponse> getPosts(int page, String searchQuery, boolean reverseOrder, String title, String memberId, boolean sortByViewCount) {
         PageRequest pageRequest;
 
-        // viewCount 기준 정렬 추가
         if (sortByViewCount) {
             pageRequest = PageRequest.of(page - 1, 10, reverseOrder
                     ? Sort.by(Sort.Order.asc("viewCount"))

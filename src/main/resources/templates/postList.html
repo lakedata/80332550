@@ -199,19 +199,23 @@
         </tbody>
     </table>
 
-    <div class="pagination" id="pagination">
-    </div>
+    <!-- 페이징 -->
+    <div class="pagination" id="pagination"></div>
+    <p id="page-info"></p> <!-- 페이지 정보 표시 -->
+
 </div>
 
 <footer th:replace="~{fragments/footer}"></footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    fetchPosts(); // 전체 목록
+    fetchPosts(); // 첫 로드
 });
 
+let currentPage = 1; // 현재 페이지
+
 function fetchPosts(searchQuery = '', reverseOrder = false, title = '', memberId = '', sortByViewCount = false) {
-    const url = `/posts?searchQuery=${searchQuery}&reverseOrder=${reverseOrder}&title=${title}&memberId=${memberId}&sortByViewCount=${sortByViewCount}`;
+    const url = `/posts?searchQuery=${searchQuery}&reverseOrder=${reverseOrder}&title=${title}&memberId=${memberId}&sortByViewCount=${sortByViewCount}&page=${currentPage}`;
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -233,9 +237,33 @@ function fetchPosts(searchQuery = '', reverseOrder = false, title = '', memberId
                 postList.appendChild(listItem);
             });
 
-            // Handle pagination (if needed)
+            updatePagination(data.content.totalPages); // 페이지네이션 업데이트
+            document.getElementById('page-info').innerText = `현재 페이지: ${currentPage} / ${data.content.totalPages} 페이지`;
         })
         .catch(error => console.error("게시글 불러오기 실패:", error));
+}
+
+// 페이지네이션 처리
+function updatePagination(totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageLink = document.createElement('a');
+        pageLink.href = "#";
+        pageLink.innerText = i;
+        pageLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentPage = i;
+            fetchPosts(); // 선택된 페이지로 다시 로드
+        });
+
+        if (i === currentPage) {
+            pageLink.classList.add('active');
+        }
+
+        pagination.appendChild(pageLink);
+    }
 }
 
 // 역순 정렬

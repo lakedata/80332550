@@ -7,14 +7,16 @@ import org.springframework.web.multipart.MultipartFile;
 public record PostCreateRequest(
         String title,
         String content,
-        MultipartFile file  // 파일 추가
+        boolean fileAttached,
+        String filePath
 ) {
     public static Post toEntity(Member member, PostCreateRequest request) {
         return Post.builder()
                 .member(member)
                 .title(request.title)
                 .content(request.content)
-                .fileAttached(request.file != null && !request.file.isEmpty())  // 파일이 있으면 true
+                .fileAttached(request.fileAttached)
+                .filePath(request.filePath)
                 .build();
     }
 }
