@@ -1,6 +1,7 @@
 package com.skmservice.domain.post.controller;
 
 import com.skmservice.domain.post.entity.Post;
+import com.skmservice.domain.post.repository.PostJpaRepository;
 import com.skmservice.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/posts")
 public class PostMappingController {
     private final PostService postService;
+    private final PostJpaRepository postRepository;
 
     @GetMapping("/list")
     public String showRegisterPage() {
@@ -27,8 +29,11 @@ public class PostMappingController {
 
     @GetMapping("/{postId}/detail")
     public String getPostDetail(@PathVariable Long postId, Model model) {
-        System.out.println("Post ID: " + postId); // URL 경로에서 postId 확인
+        System.out.println("Post ID: " + postId);
+
         Post post = postService.getPostById(postId);
+        post.increaseViewCount();
+        postRepository.save(post);
         model.addAttribute("post", post);
         return "postDetail";
     }
