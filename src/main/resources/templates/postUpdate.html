@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const titleInput = document.getElementById('title');
   const contentInput = document.getElementById('content');
   const postId = location.pathname.split('/')[2];
+ const token = localStorage.getItem('jwt_token');
   console.log(postId);  // 확인용
 
 
@@ -177,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch(`/posts/${postId}`)
     .then(response => response.json())
     .then(data => {
-      if (data.statusCode === "OK") {
+      if (data.statusCode=="OK") {
         const post = data.content;
         titleInput.value = post.title;
         contentInput.value = post.content;
@@ -202,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+           'Authorization': `Bearer ${token}`,  // Add Bearer token
         },
         body: JSON.stringify({
           title: updatedTitle,
@@ -210,9 +212,8 @@ document.addEventListener('DOMContentLoaded', function () {
       })
         .then(response => response.json())
         .then(data => {
-          if (data.success) {
+         if (data.statusCode=="OK") {
             alert('게시물이 수정되었습니다!');
-            window.location.href = `/posts/${postId}`;
           }
         })
         .catch(error => {
@@ -229,12 +230,14 @@ document.addEventListener('DOMContentLoaded', function () {
       if (confirm('정말로 이 게시물을 삭제하시겠습니까?')) {
         fetch(`/posts/${postId}`, {
           method: 'DELETE',
+           headers: {
+            'Authorization': `Bearer ${token}`,  // Add Bearer token
+          }
         })
           .then(response => response.json())
           .then(data => {
-            if (data.success) {
+      if (data.statusCode=="OK") {
               alert('게시물이 삭제되었습니다.');
-              window.location.href = '/posts';
             }
           })
           .catch(error => {

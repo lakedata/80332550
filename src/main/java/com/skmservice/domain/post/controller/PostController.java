@@ -35,14 +35,35 @@ public class PostController {
     @PutMapping("/{id}")
     public CommonResponse<Void> updatePost(
             @PathVariable Long id,
-            @RequestBody PostUpdateRequest request) {
-        postService.updatePost(id, request);
+            @RequestBody PostUpdateRequest request, @RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        }
+
+        String memberId = jwtTokenProvider.getUserPk(token);
+        System.out.println(memberId);
+        Member member = memberRepository.findByEmail(memberId)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+        postService.updatePost(id, request, member);
         return CommonResponse.onSuccess(null);
     }
 
     @DeleteMapping("/{id}")
-    public CommonResponse<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
+    public CommonResponse<Void> deletePost(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        }
+
+        String memberId = jwtTokenProvider.getUserPk(token);
+        System.out.println(memberId);
+        Member member = memberRepository.findByEmail(memberId)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
+        postService.deletePost(id,member);
         return CommonResponse.onSuccess(null);
     }
 
